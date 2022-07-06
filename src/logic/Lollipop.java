@@ -28,7 +28,7 @@ public class Lollipop {
 	
 	public void setInitialHamiltonianPath(UndirectedGraph underlyingGraph, String path) {
 		this.underlyingGraph = underlyingGraph;
-		this.n = underlyingGraph.getNumVertices();
+		this.n = underlyingGraph.n();
 		parsePath(path);
 		//We got the underlying graph and the path subgraph.
 		//Now we are going to update the knowledge we have about current, previous and next

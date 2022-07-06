@@ -39,13 +39,13 @@ public class GraphVizPrinter {
         //Start printing an undirected graph
         //First the nodes
         StringBuilder nodeLine = new StringBuilder("node [shape = circle];");
-        for (int i = 0; i < g.getNumVertices(); i++) {
+        for (int i = 0; i < g.n(); i++) {
         	nodeLine.append(" " + i);
         }
         nodeLine.append(";");
         gv.addln(nodeLine.toString());
         //Then the edges
-        for (int i = 0; i < g.getNumVertices(); i++) {
+        for (int i = 0; i < g.n(); i++) {
         	List<OneEndpointEdge> adj = g.getAdjacencyList(i);
         	for (OneEndpointEdge edge : adj) {
         		if (edge.endVertex >= i) {

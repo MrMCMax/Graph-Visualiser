@@ -1,31 +1,43 @@
 package gui;
 
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import javax.swing.JPanel;
+import javax.swing.JComponent;
 
-public class GraphDrawer extends JPanel {
+import mrmcmax.data_structures.graphs.DynamicGraph;
+import mrmcmax.data_structures.graphs.GraphException;
+
+public class GraphDrawer extends Canvas {
 	
 	HashMap<Integer, Vertex> vertices;
 	HashSet<Edge> edges;
+	
+	DynamicGraph dynGraph;
 	
 	int nextID = 0;
 	
 	public GraphDrawer() {
 		vertices = new HashMap<>();
 		edges = new HashSet<>();
+		dynGraph = new DynamicGraph();
 	}
 	
+	/**
+	 * This method paints in the screen whenever it is called.
+	 */
 	@Override
-	protected void paintComponent(Graphics g) {
-		super.paintComponent(g);
+	public void paint(Graphics g) {
+		super.paint(g);
 		for (Edge e : edges) {
 			e.draw(g);
 		}
@@ -34,39 +46,72 @@ public class GraphDrawer extends JPanel {
 		}
 	}
 	
-	public void addVertex(int x, int y) {
-		addVertex(nextID, x, y);
+	/**
+	 * This method is called whenever the window is resized.
+	 * The default implementation of update clears the screen, and then
+	 * calls paint. This implementation skips the clearing to avoid flickering.
+	 * (There is still flickering happening)
+	 */
+	@Override
+	public void update(Graphics g) {
+		paint(g);
 	}
 	
-	public void addVertex(int id, int x, int y) {
-		Vertex v = new Vertex(id, x, y);
-		if (vertices.containsKey(id)) {
-			throw new RuntimeException("Duplicated vertex");
-		} else {
-			if (id >= nextID) {
-				nextID++;
-			}
-			vertices.put(id, v);
-		}
+	/**
+	 * Adds a new vertex to the graph, drawn in the specified position (xPos, yPos)
+	 * @param xPos the x coordinate of the vertex
+	 * @param yPos the y coordinate of the vertex
+	 */
+	public int addVertex(double xPos, double yPos) {
+		int id = dynGraph.addVertex();
+		addVertexData(id, xPos, yPos);
+		return id;
+	}
+	
+	/**
+	 * Tries to add a new vertex to the graph with the given ID and drawn in the given position
+	 * (xPos, yPos)
+	 * @param id The ID of the vertex to add
+	 * @param xPos the x coordinate of the vertex
+	 * @param yPos the y coordinate of the vertex
+	 * @throws GraphException If there is already a vertex with that ID in the graph.
+	 */
+	public void addVertex(int id, double xPos, double yPos) throws GraphException {
+		dynGraph.addVertex(id);
+		addVertexData(id, xPos, yPos);
+	}
+	
+	/**
+	 * Does the necessary work to store the data about the position of a new vertex and its drawing.
+	 * @param id
+	 * @param xPos
+	 * @param yPos
+	 */
+	private void addVertexData(int id, double xPos, double yPos) {
+		Vertex v = new Vertex(id, xPos, yPos);
+		vertices.put(id, v);
 		repaint();
 	}
 	
-	public void addEdge(int id1, int id2) {
+	
+	public void addEdge(int id1, int id2) throws GraphException {
+		dynGraph.addEdge(id1, id2); 
+		//Will throw an exception if any of the vertices does not exist,
+		//aborting the rest
 		Vertex v1 = vertices.get(id1);
 		Vertex v2 = vertices.get(id2);
-		if (v1 == null || v2 == null) 
-			throw new RuntimeException("Not defined vertices");
 		edges.add(new Edge(v1, v2));
 		repaint();
 	}
 	
-	public class Vertex {
+	public class Vertex extends JComponent implements MouseMotionListener {
 		
-		int id, x, y;
+		int id;
+		double x, y;
 		
 		final static int VERTEX_SIZE = 20;
 		
-		public Vertex(int id, int x, int y) {
+		public Vertex(int id, double x, double y) {
 			this.id = id;
 			this.x = x;
 			this.y = y;
@@ -74,10 +119,10 @@ public class GraphDrawer extends JPanel {
 		
 		public void draw(Graphics g) {
 			Graphics2D g2d = (Graphics2D) g;
-			Ellipse2D.Double circleBorder = new Ellipse2D.Double(x, y, VERTEX_SIZE, VERTEX_SIZE);
-			Ellipse2D.Double circle = new Ellipse2D.Double(x+1, y+1, VERTEX_SIZE - 2, VERTEX_SIZE - 2);
+			Ellipse2D.Double circleBorder = new Ellipse2D.Double(x - VERTEX_SIZE / 2, y - VERTEX_SIZE / 2, VERTEX_SIZE, VERTEX_SIZE);
+			Ellipse2D.Double circle = new Ellipse2D.Double(x+1 - VERTEX_SIZE / 2, y+1 - VERTEX_SIZE / 2, VERTEX_SIZE - 2, VERTEX_SIZE - 2);
 			g2d.setColor(Color.BLACK);
-			System.out.println("Printing border");
+			//System.out.println("Printing border");
 	        g2d.draw(circleBorder);
 	        g2d.setColor(Color.WHITE);
 	        g2d.fill(circle);
@@ -89,7 +134,16 @@ public class GraphDrawer extends JPanel {
 		}
 		
 		public Point.Double getCenter() {
-			return new Point.Double(x + VERTEX_SIZE / 2, y + VERTEX_SIZE / 2);
+			return new Point.Double(x, y);
+		}
+
+		@Override
+		public void mouseDragged(MouseEvent e) {
+			System.out.println("Hey");
+		}
+
+		@Override
+		public void mouseMoved(MouseEvent e) {
 		}
 	}
 	
