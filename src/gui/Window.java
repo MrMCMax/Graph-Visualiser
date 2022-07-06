@@ -3,7 +3,9 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -13,12 +15,13 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.SwingConstants;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
 import javax.swing.JSpinner;
+import javax.swing.SwingConstants;
+
+import mrmcmax.data_structures.graphs.GraphException;
 
 public class Window {
 
@@ -112,6 +115,15 @@ public class Window {
 		rightPanel.add(vOutSpinner, gbc_vOutSpinner);
 		
 		JButton btnAdd = new JButton("Add");
+		btnAdd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					graphDrawer.addEdge((int) vInSpinner.getValue(), (int) vOutSpinner.getValue());
+				} catch (GraphException ex) {
+					logError(ex.getMessage());
+				}
+			}
+		});
 		GridBagConstraints gbc_btnAdd = new GridBagConstraints();
 		gbc_btnAdd.insets = new Insets(0, 0, 0, 5);
 		gbc_btnAdd.gridx = 0;
@@ -164,6 +176,14 @@ public class Window {
 			}
 		});
 		frame.getContentPane().add(graphDrawer, BorderLayout.CENTER);
+	}
+	
+	public void logError(String errorStr) {
+		JOptionPane.showMessageDialog(null,
+                errorStr,
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+		System.err.println(errorStr);
 	}
 
 }

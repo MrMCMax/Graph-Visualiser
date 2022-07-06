@@ -2,17 +2,15 @@ package gui;
 
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.util.HashMap;
 import java.util.HashSet;
-
-import javax.swing.JComponent;
 
 import mrmcmax.data_structures.graphs.DynamicGraph;
 import mrmcmax.data_structures.graphs.GraphException;
@@ -127,6 +125,16 @@ public class GraphDrawer extends Canvas {
 	        g2d.draw(circleBorder);
 	        g2d.setColor(Color.WHITE);
 	        g2d.fill(circle);
+	        //The ID on top
+	        g2d.setColor(Color.BLACK);
+	        Font serifFont = new Font("Serif", Font.PLAIN, 16);
+	        g2d.setFont(serifFont);
+	        FontMetrics fm = g.getFontMetrics();
+	        int w = fm.stringWidth(id + "");
+	        int h = fm.getAscent();
+	        float xpos = (float) x - (w / 2);
+	        float ypos = (float) y - VERTEX_SIZE / 2 - (h / 2);
+	        g2d.drawString(id + "", xpos, ypos);
 		}
 		
 		public boolean equals(Object o) {
