@@ -91,6 +91,7 @@ public class GraphDrawer extends Canvas {
 		Vertex v = new Vertex(id, xPos, yPos);
 		vertices.put(id, v);
 		repaint();
+		
 	}
 	
 	
@@ -104,7 +105,7 @@ public class GraphDrawer extends Canvas {
 		repaint();
 	}
 	
-	public class Vertex extends JComponent implements MouseMotionListener {
+	public class Vertex { //extends JComponent implements MouseMotionListener {
 		
 		int id;
 		double x, y;
@@ -136,7 +137,7 @@ public class GraphDrawer extends Canvas {
 		public Point.Double getCenter() {
 			return new Point.Double(x, y);
 		}
-
+/* For a possible mouse event on a vertex
 		@Override
 		public void mouseDragged(MouseEvent e) {
 			System.out.println("Hey");
@@ -145,6 +146,7 @@ public class GraphDrawer extends Canvas {
 		@Override
 		public void mouseMoved(MouseEvent e) {
 		}
+		*/
 	}
 	
 	public class Edge {
