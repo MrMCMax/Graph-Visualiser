@@ -7,6 +7,8 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Polygon;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.util.HashMap;
@@ -178,7 +180,26 @@ public class GraphDrawer extends Canvas {
 			Line2D.Double line = new Line2D.Double(v1.getCenter(), v2.getCenter());
 			g2d.setColor(Color.BLACK);
 			g2d.draw(line);
+			
+			//Now, the arrow head
+			AffineTransform tx = new AffineTransform();
+
+			Polygon arrowHead = new Polygon();  
+			arrowHead.addPoint(0, 0);
+			arrowHead.addPoint(-5, -10);
+			arrowHead.addPoint( 5, -10);
+			
+		    tx.setToIdentity();
+		    double angle = Math.atan2(line.y2-line.y1, line.x2-line.x1);
+		    tx.translate(line.x2 - Math.cos(angle)*Vertex.VERTEX_SIZE / 2, line.y2 - Math.sin(angle) * Vertex.VERTEX_SIZE / 2);
+		    tx.rotate((angle-Math.PI/2d));  
+
+		    Graphics2D gg = (Graphics2D) g2d.create();
+		    gg.setTransform(tx);   
+		    gg.fill(arrowHead);
+		    gg.dispose();
 		}
+		
 	}
 	
 }
